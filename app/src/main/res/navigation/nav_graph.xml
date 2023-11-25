@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/fragmentBase">
+
+    <fragment
+        android:id="@+id/fragmentCamera"
+        android:name="com.example.cowdetection.presentation.view.FragmentCamera"
+        android:label="FragmentCamera" >
+        <action
+            android:id="@+id/action_fragmentCamera_to_fragmentImage"
+            app:destination="@id/fragmentImage" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentImage"
+        android:name="com.example.cowdetection.presentation.view.FragmentImage"
+        android:label="FragmentImage" >
+        <action
+            android:id="@+id/action_fragmentImage_to_fragmentCamera"
+            app:destination="@id/fragmentCamera" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentBase"
+        android:name="com.example.cowdetection.presentation.view.FragmentBase"
+        android:label="FragmentBase" />
+</navigation>

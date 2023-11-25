@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.example.cowdetection"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.cowdetection"
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -53,4 +53,10 @@ dependencies {
     // PyTorch
     implementation("org.pytorch:pytorch_android_lite:2.1.0")
     implementation("org.pytorch:pytorch_android_torchvision_lite:2.1.0")
+
+    // Navigation
+    val nav_version = "2.7.5"
+    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
+    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
+    androidTestImplementation("androidx.navigation:navigation-testing:$nav_version")
 }

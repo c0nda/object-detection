@@ -2,20 +2,20 @@ package com.example.cowdetection.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.cowdetection.domain.usecase.ChoosePhotoFromGalleryUseCase
-import com.example.cowdetection.domain.usecase.TakePhotoUseCase
+import javax.inject.Inject
+import javax.inject.Provider
 
 
-@Suppress("UNCHECKED_CAST")
-class BaseViewModelFactory(
-    private val choosePhotoFromGalleryUseCase: ChoosePhotoFromGalleryUseCase,
-    private val takePhotoUseCase: TakePhotoUseCase
+
+class BaseViewModelFactory @Inject constructor(
+    private val viewModels: MutableMap<Class<out ViewModel>, Provider<ViewModel>>
 ) : ViewModelProvider.Factory {
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return BaseViewModel(
-            choosePhotoFromGalleryUseCase = choosePhotoFromGalleryUseCase,
-            takePhotoUseCase = takePhotoUseCase
-        ) as T
+        val viewModelProvider = viewModels[modelClass]
+            ?: throw IllegalArgumentException("ViewModel $modelClass not found")
+        return viewModelProvider.get() as T
     }
+
 }

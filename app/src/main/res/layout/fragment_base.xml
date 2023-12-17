@@ -7,12 +7,14 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainer"
-        android:name="com.example.cowdetection.presentation.view.FragmentCamera"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="600dp"
+        app:defaultNavHost="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:navGraph="@navigation/nav_graph_photo"
         tools:background="@color/cardview_dark_background">
 
     </androidx.fragment.app.FragmentContainerView>
@@ -41,8 +43,8 @@
             android:id="@+id/takePhoto"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:src="@drawable/ic_photo_button"
             android:background="@drawable/ic_circle_button_big"
+            android:src="@drawable/ic_photo_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/choosePhoto"
             app:layout_constraintStart_toEndOf="@id/closeApp"
@@ -53,8 +55,8 @@
             android:id="@+id/choosePhoto"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/ic_gallery"
             android:background="@drawable/ic_circle_button"
+            android:src="@drawable/ic_gallery"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/takePhoto"

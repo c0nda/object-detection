@@ -7,13 +7,20 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
+import com.example.cowdetection.DI
 import com.example.cowdetection.R
 import com.example.cowdetection.di.DaggerMainScreenComponent
 import com.example.cowdetection.presentation.viewmodel.BaseViewModel
 
 class FragmentImage : Fragment() {
 
-    private val component by lazy { DaggerMainScreenComponent.create() }
+    private val component by lazy {
+        DaggerMainScreenComponent.builder()
+            .filePath(DI.appComponent.filePath())
+            .imageAnalyzer(DI.appComponent.imageAnalyzer())
+            .build()
+    }
 
     private val baseViewModel by activityViewModels<BaseViewModel> { component.viewModelFactory() }
 
@@ -31,7 +38,16 @@ class FragmentImage : Fragment() {
         val photo = view.findViewById<ImageView>(R.id.image)
 
         baseViewModel.currentImage.observe(viewLifecycleOwner) {
-            photo.setImageURI(baseViewModel.currentImage.value)
+            if (it == null) {
+                navigateToFragmentCamera()
+            } else {
+                photo.setImageURI(baseViewModel.currentImage.value)
+            }
         }
+    }
+
+    private fun navigateToFragmentCamera() {
+        val action = FragmentImageDirections.actionFragmentImageToFragmentCamera()
+        findNavController().navigate(action)
     }
 }

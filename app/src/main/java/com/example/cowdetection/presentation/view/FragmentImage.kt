@@ -1,7 +1,6 @@
 package com.example.cowdetection.presentation.view
 
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -48,13 +47,10 @@ class FragmentImage : Fragment() {
                 navigateToFragmentCamera()
             } else {
                 photo.setImageURI(baseViewModel.currentImage.value)
-                val bitmap = MediaStore.Images.Media.getBitmap(
-                    requireContext().contentResolver,
-                    baseViewModel.currentImage.value
-                )
                 try {
                     lifecycleScope.launch {
-                        val result = baseViewModel.analyzeBitmap(bitmap)
+                        TODO("get resultView, get resultViewHeight and resultViewWidth")
+                        val result = baseViewModel.analyzeImage(baseViewModel.currentImage.value!!, 0, 0)
                         information.text = result.toString()
                     }
                 } catch (e: Exception) {

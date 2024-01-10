@@ -3,11 +3,11 @@ package com.example.cowdetection.presentation.view
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -25,7 +25,7 @@ import java.util.Locale
 class FragmentBase : Fragment() {
 
     companion object {
-        const val FILE_NAME_FORMAT = "yy-MM-dd-HH-mm-ss-SSS"
+        const val FILE_NAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
     }
 
     private val component by lazy {
@@ -37,10 +37,14 @@ class FragmentBase : Fragment() {
 
     private val baseViewModel by activityViewModels<BaseViewModel> { component.viewModelFactory() }
 
-    private val resultLauncher =
-        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) {
+    private val resultLauncherPick =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it != null) {
-                baseViewModel.saveImageUri(it)
+                val photoUri = it.data?.data
+                baseViewModel.saveImageUri(photoUri)
+                val takePhoto = view?.findViewById<ImageButton>(R.id.takePhoto)
+                takePhoto?.setImageResource(R.drawable.ic_camera)
+                takePhoto?.setBackgroundResource(R.drawable.ic_circle_button_big_black)
             }
         }
 
@@ -64,13 +68,9 @@ class FragmentBase : Fragment() {
         }
 
         choosePhoto.setOnClickListener {
-            val photoPickerIntent = Intent(Intent.ACTION_PICK)
-            photoPickerIntent.type = "image/*"
-            resultLauncher.launch(
-                PickVisualMediaRequest(
-                    ActivityResultContracts.PickVisualMedia.ImageOnly
-                )
-            )
+            val photoPickerIntent =
+                Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            resultLauncherPick.launch(photoPickerIntent)
         }
 
         takePhoto.setOnClickListener {

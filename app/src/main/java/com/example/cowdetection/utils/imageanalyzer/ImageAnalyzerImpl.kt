@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import com.example.cowdetection.utils.filepath.FilePathProvider
 import org.pytorch.IValue
 import org.pytorch.LiteModuleLoader
-import org.pytorch.MemoryFormat
 import org.pytorch.torchvision.TensorImageUtils
 import javax.inject.Inject
 
@@ -16,14 +15,15 @@ class ImageAnalyzerImpl @Inject constructor(
         LiteModuleLoader.load(filePathProvider.assetFilePath("weights.torchscript.ptl"))
 
     override suspend fun analyzeImage(bitmap: Bitmap): Float {
+        val newBitmap = Bitmap.createScaledBitmap(bitmap, 640, 640, true)
         val inputTensor = TensorImageUtils.bitmapToFloat32Tensor(
-            bitmap,
+            newBitmap,
             TensorImageUtils.TORCHVISION_NORM_MEAN_RGB,
-            TensorImageUtils.TORCHVISION_NORM_STD_RGB,
-            MemoryFormat.CHANNELS_LAST
+            TensorImageUtils.TORCHVISION_NORM_STD_RGB
         )
         val outputTensor = module?.forward(IValue.from(inputTensor))?.toTuple()?.get(0)?.toTensor()
         val scores = outputTensor?.dataAsFloatArray
+
         var maxScore = -Float.MAX_VALUE
         var maxScoreIndex = -1
 
@@ -37,5 +37,4 @@ class ImageAnalyzerImpl @Inject constructor(
         }
         return maxScore
     }
-
 }

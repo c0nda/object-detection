@@ -5,6 +5,8 @@ import com.example.cowdetection.utils.filepath.FilePathProvider
 import com.example.cowdetection.utils.filepath.FilePathProviderImpl
 import com.example.cowdetection.utils.imageanalyzer.ImageAnalyzer
 import com.example.cowdetection.utils.imageanalyzer.ImageAnalyzerImpl
+import com.example.cowdetection.utils.prepostprocessor.PrePostProcessor
+import com.example.cowdetection.utils.prepostprocessor.PrePostProcessorImpl
 import dagger.Binds
 import dagger.BindsInstance
 import dagger.Component
@@ -18,6 +20,8 @@ interface AppComponent {
     fun filePath(): FilePathProvider
 
     fun imageAnalyzer(): ImageAnalyzer
+
+    fun prePostProcessor(): PrePostProcessor
 
     @Component.Builder
     interface Builder {
@@ -38,4 +42,8 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindImageAnalyzer(analyzer: ImageAnalyzerImpl): ImageAnalyzer
+
+    @Binds
+    @Singleton
+    abstract fun bindPrePostProcessor(processor: PrePostProcessorImpl): PrePostProcessor
 }

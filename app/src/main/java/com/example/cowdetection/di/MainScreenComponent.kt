@@ -5,6 +5,7 @@ import com.example.cowdetection.presentation.viewmodel.BaseViewModel
 import com.example.cowdetection.presentation.viewmodel.BaseViewModelFactory
 import com.example.cowdetection.utils.filepath.FilePathProvider
 import com.example.cowdetection.utils.imageanalyzer.ImageAnalyzer
+import com.example.cowdetection.utils.prepostprocessor.PrePostProcessor
 import dagger.Binds
 import dagger.BindsInstance
 import dagger.Component
@@ -25,6 +26,9 @@ interface MainScreenComponent {
 
         @BindsInstance
         fun imageAnalyzer(imageAnalyzer: ImageAnalyzer): Builder
+
+        @BindsInstance
+        fun prePostProcessor(prePostProcessor: PrePostProcessor): Builder
 
         fun build(): MainScreenComponent
     }

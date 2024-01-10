@@ -11,7 +11,7 @@ import dagger.Component
 import dagger.Module
 import dagger.multibindings.IntoMap
 
-@Component(modules = [MainScreenModule::class, UseCaseModule::class])
+@Component(modules = [MainScreenModule::class])
 @ScreenScope
 interface MainScreenComponent {
 

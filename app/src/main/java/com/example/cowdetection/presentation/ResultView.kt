@@ -14,7 +14,6 @@ import com.example.cowdetection.utils.prepostprocessor.AnalysisResult
 class ResultView constructor(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
     var results: AnalysisResult? = null
-        set
 
     private val paintRectangle = Paint()
     private val path = Path()

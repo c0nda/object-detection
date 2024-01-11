@@ -1,12 +1,12 @@
 package com.example.cowdetection.presentation.view
 
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -14,7 +14,9 @@ import androidx.navigation.fragment.findNavController
 import com.example.cowdetection.DI
 import com.example.cowdetection.R
 import com.example.cowdetection.di.DaggerMainScreenComponent
+import com.example.cowdetection.presentation.ResultView
 import com.example.cowdetection.presentation.viewmodel.BaseViewModel
+import com.example.cowdetection.utils.prepostprocessor.AnalysisResult
 import kotlinx.coroutines.launch
 
 class FragmentImage : Fragment() {
@@ -23,6 +25,8 @@ class FragmentImage : Fragment() {
         DaggerMainScreenComponent.builder()
             .filePath(DI.appComponent.filePath())
             .imageAnalyzer(DI.appComponent.imageAnalyzer())
+            .prePostProcessor(DI.appComponent.prePostProcessor())
+            .contentResolver(DI.appComponent.contentResolver())
             .build()
     }
 
@@ -40,19 +44,26 @@ class FragmentImage : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val photo = view.findViewById<ImageView>(R.id.image)
-        val information = view.findViewById<TextView>(R.id.ivInformation)
+        val resultView = view.findViewById<ResultView>(R.id.resultView)
 
         baseViewModel.currentImage.observe(viewLifecycleOwner) {
             if (it == null) {
                 navigateToFragmentCamera()
             } else {
-                photo.setImageURI(baseViewModel.currentImage.value)
+                val bitmap = baseViewModel.createBitmap(baseViewModel.currentImage.value!!)
+                photo.setImageBitmap(bitmap)
                 try {
+                    var result: AnalysisResult? = null
                     lifecycleScope.launch {
-                        TODO("get resultView, get resultViewHeight and resultViewWidth")
-                        val result = baseViewModel.analyzeImage(baseViewModel.currentImage.value!!, 0, 0)
-                        information.text = result.toString()
+                        result = baseViewModel.analyzeImage(
+                            bitmap,
+                            resultView.width,
+                            resultView.height
+                        )
                     }
+                    resultView.results = result
+                    resultView.invalidate()
+                    resultView.visibility = View.VISIBLE
                 } catch (e: Exception) {
                     Log.e("analyzer", e.printStackTrace().toString())
                 }

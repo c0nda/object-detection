@@ -1,10 +1,10 @@
 package com.example.cowdetection.utils.imageanalyzer
 
-import android.net.Uri
+import android.graphics.Bitmap
 import com.example.cowdetection.utils.prepostprocessor.AnalysisResult
 
 interface ImageAnalyzer {
 
-    suspend fun analyzeImage(uri: Uri, resultViewWidth: Int, resultViewHeight: Int): AnalysisResult
+    suspend fun analyzeImage(bitmap: Bitmap, resultViewWidth: Int, resultViewHeight: Int): AnalysisResult
 
 }

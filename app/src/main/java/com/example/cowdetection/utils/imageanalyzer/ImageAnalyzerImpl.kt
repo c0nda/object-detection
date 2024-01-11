@@ -1,10 +1,6 @@
 package com.example.cowdetection.utils.imageanalyzer
 
-import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Matrix
-import android.net.Uri
-import android.provider.MediaStore
 import com.example.cowdetection.utils.INPUT_IMAGE_HEIGHT
 import com.example.cowdetection.utils.INPUT_IMAGE_WIDTH
 import com.example.cowdetection.utils.filepath.FilePathProvider
@@ -17,8 +13,7 @@ import javax.inject.Inject
 
 class ImageAnalyzerImpl @Inject constructor(
     private val filePathProvider: FilePathProvider,
-    private val prePostProcessor: PrePostProcessor,
-    private val context: Context
+    private val prePostProcessor: PrePostProcessor
 ) : ImageAnalyzer {
 
     companion object {
@@ -29,20 +24,7 @@ class ImageAnalyzerImpl @Inject constructor(
     private val module =
         LiteModuleLoader.load(filePathProvider.assetFilePath("weights.torchscript.ptl"))
 
-    override suspend fun analyzeImage(uri: Uri, resultViewWidth: Int, resultViewHeight: Int): AnalysisResult {
-        var bitmap = MediaStore.Images.Media.getBitmap(
-            context.contentResolver,
-            uri
-        )
-        val matrix = Matrix()
-        matrix.postRotate(90F)
-        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-        bitmap = Bitmap.createScaledBitmap(
-            bitmap,
-            INPUT_IMAGE_WIDTH,
-            INPUT_IMAGE_HEIGHT,
-            true
-        )
+    override suspend fun analyzeImage(bitmap: Bitmap, resultViewWidth: Int, resultViewHeight: Int): AnalysisResult {
         val inputTensor = TensorImageUtils.bitmapToFloat32Tensor(
             bitmap,
             NO_MEAN_RGB,

@@ -32,6 +32,8 @@ class FragmentBase : Fragment() {
         DaggerMainScreenComponent.builder()
             .filePath(DI.appComponent.filePath())
             .imageAnalyzer(DI.appComponent.imageAnalyzer())
+            .prePostProcessor(DI.appComponent.prePostProcessor())
+            .contentResolver(DI.appComponent.contentResolver())
             .build()
     }
 

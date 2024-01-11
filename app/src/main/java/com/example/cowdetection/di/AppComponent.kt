@@ -1,6 +1,8 @@
 package com.example.cowdetection.di
 
 import android.content.Context
+import com.example.cowdetection.utils.contentresolver.ContentResolverProvider
+import com.example.cowdetection.utils.contentresolver.ContentResolverProviderImpl
 import com.example.cowdetection.utils.filepath.FilePathProvider
 import com.example.cowdetection.utils.filepath.FilePathProviderImpl
 import com.example.cowdetection.utils.imageanalyzer.ImageAnalyzer
@@ -22,6 +24,8 @@ interface AppComponent {
     fun imageAnalyzer(): ImageAnalyzer
 
     fun prePostProcessor(): PrePostProcessor
+
+    fun contentResolver(): ContentResolverProvider
 
     @Component.Builder
     interface Builder {
@@ -46,4 +50,8 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindPrePostProcessor(processor: PrePostProcessorImpl): PrePostProcessor
+
+    @Binds
+    @Singleton
+    abstract fun bindContentResolverProvider(provider: ContentResolverProviderImpl): ContentResolverProvider
 }

@@ -21,6 +21,8 @@ import com.example.cowdetection.DI
 import com.example.cowdetection.R
 import com.example.cowdetection.di.DaggerMainScreenComponent
 import com.example.cowdetection.presentation.viewmodel.BaseViewModel
+import com.example.cowdetection.utils.INPUT_IMAGE_HEIGHT
+import com.example.cowdetection.utils.INPUT_IMAGE_WIDTH
 import com.google.common.util.concurrent.ListenableFuture
 import java.util.concurrent.ExecutionException
 
@@ -90,7 +92,7 @@ class FragmentCamera : Fragment() {
 
             val imageCapture = ImageCapture.Builder()
                 .setFlashMode(flashMode)
-                .setTargetResolution(Size(640, 640))
+                .setTargetResolution(Size(INPUT_IMAGE_WIDTH, INPUT_IMAGE_HEIGHT))
                 .build()
 
             baseViewModel.saveImageCapture(imageCapture)

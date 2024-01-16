@@ -32,6 +32,9 @@ class BaseViewModel @Inject constructor(
     private val _imageCapture = MutableLiveData<ImageCapture>()
     val imageCapture: LiveData<ImageCapture> = _imageCapture
 
+    private val _imageFromCamera = MutableLiveData<Boolean?>()
+    val imageFromCamera: LiveData<Boolean?> = _imageFromCamera
+
     init {
         _imageCapture.value = ImageCapture.Builder()
             .setTargetResolution(Size(INPUT_IMAGE_WIDTH, INPUT_IMAGE_HEIGHT))
@@ -59,24 +62,31 @@ class BaseViewModel @Inject constructor(
         resultViewWidth: Int,
         resultViewHeight: Int
     ): AnalysisResult = coroutineScope {
-        val analysis = async { imageAnalyzer.analyzeImage(bitmap, resultViewWidth, resultViewHeight) }
+        val analysis =
+            async { imageAnalyzer.analyzeImage(bitmap, resultViewWidth, resultViewHeight) }
         return@coroutineScope analysis.await()
     }
 
-    fun createBitmap(uri: Uri): Bitmap {
+    fun createBitmap(uri: Uri, fromCamera: Boolean): Bitmap {
         var bitmap = MediaStore.Images.Media.getBitmap(
             contentResolverProvider.contentResolver(),
             uri
         )
+        val matrix = Matrix()
+        if (fromCamera) {
+            matrix.postRotate(90F)
+        }
+        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
         bitmap = Bitmap.createScaledBitmap(
             bitmap,
             INPUT_IMAGE_WIDTH,
             INPUT_IMAGE_HEIGHT,
             true
         )
-        val matrix = Matrix()
-        matrix.postRotate(90F)
-        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
         return bitmap
+    }
+
+    fun setImageSource(fromCamera: Boolean?) {
+        _imageFromCamera.value = fromCamera
     }
 }

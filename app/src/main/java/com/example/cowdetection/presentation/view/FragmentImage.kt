@@ -1,7 +1,6 @@
 package com.example.cowdetection.presentation.view
 
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +15,7 @@ import com.example.cowdetection.R
 import com.example.cowdetection.di.DaggerMainScreenComponent
 import com.example.cowdetection.presentation.ResultView
 import com.example.cowdetection.presentation.viewmodel.BaseViewModel
-import com.example.cowdetection.utils.prepostprocessor.AnalysisResult
+import com.example.cowdetection.utils.prepostprocessor.model.AnalysisResult
 import kotlinx.coroutines.launch
 
 class FragmentImage : Fragment() {

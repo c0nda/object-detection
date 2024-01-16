@@ -1,4 +1,4 @@
-package com.example.cowdetection.utils.prepostprocessor
+package com.example.cowdetection.utils.prepostprocessor.model
 
 import android.graphics.Rect
 

@@ -1,6 +1,7 @@
 package com.example.cowdetection.utils.prepostprocessor
 
 import android.graphics.Rect
+import com.example.cowdetection.utils.prepostprocessor.model.Result
 import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.min
@@ -10,7 +11,7 @@ class PrePostProcessorImpl @Inject constructor() : PrePostProcessor {
     companion object {
         const val outputRow = 25200
         const val outputColumn = 12
-        const val threshold = 0.85F
+        const val threshold = 0.3F
         const val nmsLimit = 3
     }
 
@@ -82,15 +83,7 @@ class PrePostProcessorImpl @Inject constructor() : PrePostProcessor {
     ): ArrayList<Result> {
         val results = ArrayList<Result>()
         for (i in 0 until outputRow) {
-            var classIndex = 0
-            var score = outputs[i * outputColumn + 4]
-            for (j in 0 until outputColumn - 4) {
-                if (outputs[i * outputColumn + 4 + j] > score) {
-                    score = outputs[i * outputColumn + 4 + j]
-                    classIndex = j
-                }
-            }
-            if (score > threshold) {
+            if (outputs[i * outputColumn + 4] > threshold) {
                 val x = outputs[i * outputColumn]
                 val y = outputs[i * outputColumn + 1]
                 val w = outputs[i * outputColumn + 2]
@@ -101,6 +94,14 @@ class PrePostProcessorImpl @Inject constructor() : PrePostProcessor {
                 val right = imgScaleX * (x + w / 2)
                 val bottom = imgScaleY * (y + h / 2)
 
+                var max = outputs[i * outputColumn + 5]
+                var cls = 0
+                for (j in 0 until outputColumn - 5) {
+                    if (outputs[i * outputColumn + 5 + j] > max) {
+                        max = outputs[i * outputColumn + 5 + j]
+                        cls = j
+                    }
+                }
                 val rect = Rect(
                     (startX + ivScaleX * left).toInt(),
                     (startY + ivScaleY * top).toInt(),
@@ -109,13 +110,13 @@ class PrePostProcessorImpl @Inject constructor() : PrePostProcessor {
                 )
 
                 val result = Result(
-                    classIndex = classIndex,
-                    score = score,
+                    classIndex = cls,
+                    score = outputs[i * outputColumn + 4],
                     rect
                 )
                 results.add(result)
             }
         }
-        return nonMaxSuppression(boxes = results, limit = nmsLimit, threshold = 0.5F)
+        return nonMaxSuppression(boxes = results, limit = nmsLimit, threshold = threshold)
     }
 }

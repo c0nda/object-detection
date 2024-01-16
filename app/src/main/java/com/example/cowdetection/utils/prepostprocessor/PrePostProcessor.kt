@@ -1,5 +1,7 @@
 package com.example.cowdetection.utils.prepostprocessor
 
+import com.example.cowdetection.utils.prepostprocessor.model.Result
+
 interface PrePostProcessor {
 
     fun outputsToNMSPredictions(

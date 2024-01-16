@@ -1,12 +1,14 @@
 package com.example.cowdetection.di
 
 import androidx.lifecycle.ViewModel
+import com.example.cowdetection.DI
 import com.example.cowdetection.presentation.viewmodel.BaseViewModel
 import com.example.cowdetection.presentation.viewmodel.BaseViewModelFactory
 import com.example.cowdetection.utils.contentresolver.ContentResolverProvider
 import com.example.cowdetection.utils.filepath.FilePathProvider
 import com.example.cowdetection.utils.imageanalyzer.ImageAnalyzer
 import com.example.cowdetection.utils.prepostprocessor.PrePostProcessor
+import com.example.cowdetection.utils.resource.ResourceProvider
 import dagger.Binds
 import dagger.BindsInstance
 import dagger.Component
@@ -34,7 +36,22 @@ interface MainScreenComponent {
         @BindsInstance
         fun contentResolver(contentResolver: ContentResolverProvider): Builder
 
+        @BindsInstance
+        fun resources(resourceProvider: ResourceProvider): Builder
+
         fun build(): MainScreenComponent
+    }
+
+    companion object {
+        fun create() = with(DI.appComponent) {
+            DaggerMainScreenComponent.builder()
+                .filePath(filePath())
+                .imageAnalyzer(imageAnalyzer())
+                .prePostProcessor(prePostProcessor())
+                .contentResolver(contentResolver())
+                .resources(resources())
+                .build()
+        }
     }
 }
 

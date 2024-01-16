@@ -17,9 +17,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.example.cowdetection.DI
 import com.example.cowdetection.R
-import com.example.cowdetection.di.DaggerMainScreenComponent
+import com.example.cowdetection.di.MainScreenComponent
 import com.example.cowdetection.presentation.viewmodel.BaseViewModel
 import com.example.cowdetection.utils.INPUT_IMAGE_HEIGHT
 import com.example.cowdetection.utils.INPUT_IMAGE_WIDTH
@@ -36,14 +35,7 @@ class FragmentCamera : Fragment() {
     private var flashMode = ImageCapture.FLASH_MODE_OFF
     private var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>? = null
 
-    private val component by lazy {
-        DaggerMainScreenComponent.builder()
-            .filePath(DI.appComponent.filePath())
-            .imageAnalyzer(DI.appComponent.imageAnalyzer())
-            .prePostProcessor(DI.appComponent.prePostProcessor())
-            .contentResolver(DI.appComponent.contentResolver())
-            .build()
-    }
+    private val component by lazy { MainScreenComponent.create() }
 
     private val baseViewModel by activityViewModels<BaseViewModel> { component.viewModelFactory() }
 

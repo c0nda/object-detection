@@ -10,9 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.cowdetection.DI
 import com.example.cowdetection.R
-import com.example.cowdetection.di.DaggerMainScreenComponent
+import com.example.cowdetection.di.MainScreenComponent
 import com.example.cowdetection.presentation.ResultView
 import com.example.cowdetection.presentation.viewmodel.BaseViewModel
 import com.example.cowdetection.utils.prepostprocessor.model.AnalysisResult
@@ -20,14 +19,7 @@ import kotlinx.coroutines.launch
 
 class FragmentImage : Fragment() {
 
-    private val component by lazy {
-        DaggerMainScreenComponent.builder()
-            .filePath(DI.appComponent.filePath())
-            .imageAnalyzer(DI.appComponent.imageAnalyzer())
-            .prePostProcessor(DI.appComponent.prePostProcessor())
-            .contentResolver(DI.appComponent.contentResolver())
-            .build()
-    }
+    private val component by lazy { MainScreenComponent.create() }
 
     private val baseViewModel by activityViewModels<BaseViewModel> { component.viewModelFactory() }
 
@@ -49,7 +41,11 @@ class FragmentImage : Fragment() {
             if (it == null) {
                 navigateToFragmentCamera()
             } else {
-                val bitmap = baseViewModel.createBitmap(baseViewModel.currentImage.value!!)
+                val bitmap = baseViewModel.createBitmap(
+                    baseViewModel.currentImage.value!!,
+                    fromCamera = baseViewModel.imageFromCamera.value!!
+                )
+                baseViewModel.setImageSource(fromCamera = null)
                 photo.setImageBitmap(bitmap)
                 try {
                     var result: AnalysisResult? = null

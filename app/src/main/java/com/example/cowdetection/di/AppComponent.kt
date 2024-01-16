@@ -9,6 +9,8 @@ import com.example.cowdetection.utils.imageanalyzer.ImageAnalyzer
 import com.example.cowdetection.utils.imageanalyzer.ImageAnalyzerImpl
 import com.example.cowdetection.utils.prepostprocessor.PrePostProcessor
 import com.example.cowdetection.utils.prepostprocessor.PrePostProcessorImpl
+import com.example.cowdetection.utils.resource.ResourceProvider
+import com.example.cowdetection.utils.resource.ResourceProviderImpl
 import dagger.Binds
 import dagger.BindsInstance
 import dagger.Component
@@ -26,6 +28,8 @@ interface AppComponent {
     fun prePostProcessor(): PrePostProcessor
 
     fun contentResolver(): ContentResolverProvider
+
+    fun resources(): ResourceProvider
 
     @Component.Builder
     interface Builder {
@@ -54,4 +58,8 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindContentResolverProvider(provider: ContentResolverProviderImpl): ContentResolverProvider
+
+    @Binds
+    @Singleton
+    abstract fun bindResourceProvider(provider: ResourceProviderImpl): ResourceProvider
 }

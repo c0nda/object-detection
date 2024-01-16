@@ -14,7 +14,7 @@ import com.example.cowdetection.utils.INPUT_IMAGE_WIDTH
 import com.example.cowdetection.utils.contentresolver.ContentResolverProvider
 import com.example.cowdetection.utils.filepath.FilePathProvider
 import com.example.cowdetection.utils.imageanalyzer.ImageAnalyzer
-import com.example.cowdetection.utils.prepostprocessor.AnalysisResult
+import com.example.cowdetection.utils.prepostprocessor.model.AnalysisResult
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import java.io.File

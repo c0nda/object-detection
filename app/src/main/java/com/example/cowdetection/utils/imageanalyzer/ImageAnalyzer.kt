@@ -1,7 +1,7 @@
 package com.example.cowdetection.utils.imageanalyzer
 
 import android.graphics.Bitmap
-import com.example.cowdetection.utils.prepostprocessor.AnalysisResult
+import com.example.cowdetection.utils.prepostprocessor.model.AnalysisResult
 
 interface ImageAnalyzer {
 

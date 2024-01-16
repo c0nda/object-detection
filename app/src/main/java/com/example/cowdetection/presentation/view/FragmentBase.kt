@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -32,21 +31,11 @@ class FragmentBase : Fragment() {
 
     private val baseViewModel by activityViewModels<BaseViewModel> { component.viewModelFactory() }
 
-//    private val resultLauncherGalleryPick =
-//        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-//            if (it != null) {
-//                val photoUri = it.data?.data
-//                baseViewModel.saveImageUri(photoUri)
-//                val takePhoto = view?.findViewById<ImageButton>(R.id.takePhoto)
-//                takePhoto?.setImageResource(R.drawable.ic_camera)
-//                takePhoto?.setBackgroundResource(R.drawable.ic_circle_button_big_black)
-//            }
-//        }
-
-    private val resultLauncherMediaStorePick =
-        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) {
+    private val resultLauncherGalleryPick =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it != null) {
-                baseViewModel.saveImageUri(it)
+                val photoUri = it.data?.data
+                baseViewModel.saveImageUri(photoUri)
                 val takePhoto = view?.findViewById<ImageButton>(R.id.takePhoto)
                 takePhoto?.setImageResource(R.drawable.ic_camera)
                 takePhoto?.setBackgroundResource(R.drawable.ic_circle_button_big_black)
@@ -74,19 +63,9 @@ class FragmentBase : Fragment() {
 
         choosePhoto.setOnClickListener {
             baseViewModel.setImageSource(fromCamera = false)
-//            if () {
-//                val photoPickerIntent =
-//                    Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-//                resultLauncherGalleryPick.launch(photoPickerIntent)
-//            } else {
-            val photoPickerIntent = Intent(Intent.ACTION_PICK)
-            photoPickerIntent.type = "image/*"
-            resultLauncherMediaStorePick.launch(
-                PickVisualMediaRequest(
-                    ActivityResultContracts.PickVisualMedia.ImageOnly
-                )
-            )
-//            }
+                val photoPickerIntent =
+                    Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                resultLauncherGalleryPick.launch(photoPickerIntent)
         }
 
         takePhoto.setOnClickListener {

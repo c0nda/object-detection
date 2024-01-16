@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">cow-detection</string>
+    <string name="neural_network_filename">yolov5s.torchscript.ptl</string>
 </resources>

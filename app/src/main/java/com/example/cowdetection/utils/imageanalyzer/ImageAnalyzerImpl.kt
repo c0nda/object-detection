@@ -1,7 +1,6 @@
 package com.example.cowdetection.utils.imageanalyzer
 
 import android.graphics.Bitmap
-import android.util.Log
 import com.example.cowdetection.R
 import com.example.cowdetection.utils.INPUT_IMAGE_HEIGHT
 import com.example.cowdetection.utils.INPUT_IMAGE_WIDTH
@@ -35,7 +34,9 @@ class ImageAnalyzerImpl @Inject constructor(
     override suspend fun analyzeImage(
         bitmap: Bitmap,
         resultViewWidth: Int,
-        resultViewHeight: Int
+        resultViewHeight: Int,
+        sourceBitmapWidth: Int,
+        sourceBitmapHeight: Int
     ): AnalysisResult {
         val inputTensor = TensorImageUtils.bitmapToFloat32Tensor(
             bitmap,
@@ -45,10 +46,12 @@ class ImageAnalyzerImpl @Inject constructor(
         val outputTensor = module?.forward(IValue.from(inputTensor))?.toTuple()?.get(0)?.toTensor()
         val scores = outputTensor?.dataAsFloatArray!!
 
-        val imgScaleX = bitmap.width.toFloat() / INPUT_IMAGE_WIDTH
-        val imgScaleY = bitmap.height.toFloat() / INPUT_IMAGE_HEIGHT
-        val ivScaleX = resultViewWidth.toFloat() / bitmap.width
-        val ivScaleY = resultViewHeight.toFloat() / bitmap.height
+        val imgScaleX = sourceBitmapWidth.toFloat() / INPUT_IMAGE_WIDTH
+        val imgScaleY = sourceBitmapHeight.toFloat() / INPUT_IMAGE_HEIGHT
+        val ivScaleX = resultViewWidth.toFloat() / sourceBitmapWidth
+        val ivScaleY = resultViewHeight.toFloat() / sourceBitmapHeight
+        val startX = (resultViewWidth - ivScaleX * sourceBitmapWidth) / 2
+        val startY = (resultViewHeight - ivScaleY * sourceBitmapHeight) / 2
 
         val results = prePostProcessor.outputsToNMSPredictions(
             scores,
@@ -56,8 +59,8 @@ class ImageAnalyzerImpl @Inject constructor(
             imgScaleY,
             ivScaleX,
             ivScaleY,
-            0F,
-            0F
+            startX,
+            startY
         )
         return AnalysisResult(results)
     }

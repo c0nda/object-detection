@@ -10,9 +10,9 @@ class PrePostProcessorImpl @Inject constructor() : PrePostProcessor {
 
     companion object {
         const val outputRow = 25200
-        const val outputColumn = 12
+        const val outputColumn = 85
         const val threshold = 0.3F
-        const val nmsLimit = 3
+        const val nmsLimit = 15
     }
 
     private fun nonMaxSuppression(
@@ -20,7 +20,7 @@ class PrePostProcessorImpl @Inject constructor() : PrePostProcessor {
         limit: Int,
         threshold: Float
     ): ArrayList<Result> {
-        val scores = boxes.sortedByDescending { it.score }
+        val scores = boxes.sortedBy { it.score }
         val selected = ArrayList<Result>()
         val active = BooleanArray(scores.size) { true }
         var numActive = active.size
@@ -102,6 +102,7 @@ class PrePostProcessorImpl @Inject constructor() : PrePostProcessor {
                         cls = j
                     }
                 }
+
                 val rect = Rect(
                     (startX + ivScaleX * left).toInt(),
                     (startY + ivScaleY * top).toInt(),

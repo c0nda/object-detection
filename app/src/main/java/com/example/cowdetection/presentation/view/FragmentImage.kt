@@ -1,10 +1,12 @@
 package com.example.cowdetection.presentation.view
 
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -41,24 +43,41 @@ class FragmentImage : Fragment() {
             if (it == null) {
                 navigateToFragmentCamera()
             } else {
-                val bitmap = baseViewModel.createBitmap(
-                    baseViewModel.currentImage.value!!,
-                    fromCamera = baseViewModel.imageFromCamera.value!!
-                )
-                baseViewModel.setImageSource(fromCamera = null)
-                photo.setImageBitmap(bitmap)
                 try {
-                    var result: AnalysisResult? = null
-                    lifecycleScope.launch {
-                        result = baseViewModel.analyzeImage(
-                            bitmap,
-                            resultView.width,
-                            resultView.height
-                        )
-                    }
-                    resultView.results = result
-                    resultView.invalidate()
-                    resultView.visibility = View.VISIBLE
+                    view.viewTreeObserver.addOnGlobalLayoutListener(object :
+                        ViewTreeObserver.OnGlobalLayoutListener {
+                        override fun onGlobalLayout() {
+                            view.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+                            var result: AnalysisResult? = null
+
+                            val sourceBitmap = MediaStore.Images.Media.getBitmap(
+                                context?.contentResolver,
+                                it
+                            )
+                            val bitmap = baseViewModel.createScaledBitmap(
+                                sourceBitmap,
+                                fromCamera = baseViewModel.imageFromCamera.value!!
+                            )
+
+                            baseViewModel.setImageSource(fromCamera = null)
+                            photo.setImageBitmap(bitmap)
+
+                            lifecycleScope.launch {
+                                result = baseViewModel.analyzeImage(
+                                    bitmap,
+                                    view.width,
+                                    view.height,
+                                    sourceBitmap.width,
+                                    sourceBitmap.height
+                                )
+                            }
+
+                            resultView.results = result
+                            resultView.invalidate()
+                            resultView.visibility = View.VISIBLE
+                        }
+                    })
                 } catch (e: Exception) {
                     Log.e("analyzer", e.printStackTrace().toString())
                 }

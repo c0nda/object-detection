@@ -3,7 +3,6 @@ package com.example.cowdetection.presentation.viewmodel
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.net.Uri
-import android.provider.MediaStore
 import android.util.Size
 import androidx.camera.core.ImageCapture
 import androidx.lifecycle.LiveData
@@ -11,7 +10,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.cowdetection.utils.INPUT_IMAGE_HEIGHT
 import com.example.cowdetection.utils.INPUT_IMAGE_WIDTH
-import com.example.cowdetection.utils.contentresolver.ContentResolverProvider
 import com.example.cowdetection.utils.filepath.FilePathProvider
 import com.example.cowdetection.utils.imageanalyzer.ImageAnalyzer
 import com.example.cowdetection.utils.prepostprocessor.model.AnalysisResult
@@ -22,8 +20,7 @@ import javax.inject.Inject
 
 class BaseViewModel @Inject constructor(
     private val filePathProvider: FilePathProvider,
-    private val imageAnalyzer: ImageAnalyzer,
-    private val contentResolverProvider: ContentResolverProvider
+    private val imageAnalyzer: ImageAnalyzer
 ) : ViewModel() {
 
     private val _currentImage = MutableLiveData<Uri?>(null)
@@ -60,23 +57,37 @@ class BaseViewModel @Inject constructor(
     suspend fun analyzeImage(
         bitmap: Bitmap,
         resultViewWidth: Int,
-        resultViewHeight: Int
+        resultViewHeight: Int,
+        sourceBitmapWidth: Int,
+        sourceBitmapHeight: Int
     ): AnalysisResult = coroutineScope {
         val analysis =
-            async { imageAnalyzer.analyzeImage(bitmap, resultViewWidth, resultViewHeight) }
+            async {
+                imageAnalyzer.analyzeImage(
+                    bitmap,
+                    resultViewWidth,
+                    resultViewHeight,
+                    sourceBitmapWidth,
+                    sourceBitmapHeight,
+                )
+            }
         return@coroutineScope analysis.await()
     }
 
-    fun createBitmap(uri: Uri, fromCamera: Boolean): Bitmap {
-        var bitmap = MediaStore.Images.Media.getBitmap(
-            contentResolverProvider.contentResolver(),
-            uri
-        )
+    fun createScaledBitmap(sourceBitmap: Bitmap, fromCamera: Boolean): Bitmap {
         val matrix = Matrix()
         if (fromCamera) {
             matrix.postRotate(90F)
         }
-        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+        var bitmap = Bitmap.createBitmap(
+            sourceBitmap,
+            0,
+            0,
+            sourceBitmap.width,
+            sourceBitmap.height,
+            matrix,
+            true
+        )
         bitmap = Bitmap.createScaledBitmap(
             bitmap,
             INPUT_IMAGE_WIDTH,

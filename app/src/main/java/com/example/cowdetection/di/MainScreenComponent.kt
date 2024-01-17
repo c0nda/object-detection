@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import com.example.cowdetection.DI
 import com.example.cowdetection.presentation.viewmodel.BaseViewModel
 import com.example.cowdetection.presentation.viewmodel.BaseViewModelFactory
-import com.example.cowdetection.utils.contentresolver.ContentResolverProvider
 import com.example.cowdetection.utils.filepath.FilePathProvider
 import com.example.cowdetection.utils.imageanalyzer.ImageAnalyzer
 import com.example.cowdetection.utils.prepostprocessor.PrePostProcessor
@@ -34,9 +33,6 @@ interface MainScreenComponent {
         fun prePostProcessor(prePostProcessor: PrePostProcessor): Builder
 
         @BindsInstance
-        fun contentResolver(contentResolver: ContentResolverProvider): Builder
-
-        @BindsInstance
         fun resources(resourceProvider: ResourceProvider): Builder
 
         fun build(): MainScreenComponent
@@ -48,7 +44,6 @@ interface MainScreenComponent {
                 .filePath(filePath())
                 .imageAnalyzer(imageAnalyzer())
                 .prePostProcessor(prePostProcessor())
-                .contentResolver(contentResolver())
                 .resources(resources())
                 .build()
         }

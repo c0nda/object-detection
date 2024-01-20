@@ -12,19 +12,19 @@ import android.view.View
 import com.example.cowdetection.utils.prepostprocessor.model.AnalysisResult
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import kotlin.math.min
 
 class ResultView constructor(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
     var results: AnalysisResult? = null
 
     private val paintRectangle = Paint()
-    private val path = Path()
     private val paintText = Paint()
 
     companion object {
-        const val TEXT_X = 40
+        const val TEXT_X = 10
         const val TEXT_Y = 35
-        const val TEXT_WIDTH = 260
+        const val TEXT_WIDTH = 200
         const val TEXT_HEIGHT = 50
 //        val classes = listOf(
 //            "coverall",
@@ -44,6 +44,18 @@ class ResultView constructor(context: Context, attrs: AttributeSet?) : View(cont
         super.onDraw(canvas)
 
         if (results == null) return
+
+        val classes = ArrayList<String>()
+        val br = BufferedReader(InputStreamReader(context.assets.open("classes.txt")))
+        var line: String?
+        while (true) {
+            line = br.readLine()
+            if (line == null) {
+                break
+            }
+            classes.add(line)
+        }
+
         for (result in results!!.results) {
             paintRectangle.strokeWidth = 5F
             paintRectangle.style = Paint.Style.STROKE
@@ -52,10 +64,11 @@ class ResultView constructor(context: Context, attrs: AttributeSet?) : View(cont
             val rectF = RectF(
                 result.rect.left.toFloat(),
                 result.rect.top.toFloat(),
-                (result.rect.left + TEXT_WIDTH).toFloat(),
+                min((result.rect.left + TEXT_WIDTH).toFloat(), result.rect.right.toFloat()),
                 (result.rect.top + TEXT_HEIGHT).toFloat()
             )
 
+            val path = Path()
             path.addRect(rectF, Path.Direction.CW)
             paintText.color = Color.BLUE
             canvas.drawPath(path, paintText)
@@ -64,17 +77,6 @@ class ResultView constructor(context: Context, attrs: AttributeSet?) : View(cont
             paintText.strokeWidth = 0F
             paintText.style = Paint.Style.FILL
             paintText.textSize = 32F
-
-            val classes = ArrayList<String>()
-            val br = BufferedReader(InputStreamReader(context.assets.open("classes.txt")))
-            var line: String?
-            while (true) {
-                line = br.readLine()
-                if (line == null) {
-                    break
-                }
-                classes.add(line)
-            }
 
             canvas.drawText(
                 String.format("%s %.2f", classes[result.classIndex], result.score),

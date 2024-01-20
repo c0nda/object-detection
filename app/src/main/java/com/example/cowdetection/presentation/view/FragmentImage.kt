@@ -43,45 +43,39 @@ class FragmentImage : Fragment() {
             if (it == null) {
                 navigateToFragmentCamera()
             } else {
-                view.viewTreeObserver.addOnGlobalLayoutListener(object :
-                    ViewTreeObserver.OnGlobalLayoutListener {
-                    override fun onGlobalLayout() {
-                        view.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                view.post {
+                    var result: AnalysisResult? = null
 
-                        var result: AnalysisResult? = null
+                    val sourceBitmap = MediaStore.Images.Media.getBitmap(
+                        context?.contentResolver,
+                        it
+                    )
+                    val bitmap = baseViewModel.createScaledBitmap(
+                        sourceBitmap,
+                        fromCamera = baseViewModel.imageFromCamera.value!!
+                    )
 
-                        val sourceBitmap = MediaStore.Images.Media.getBitmap(
-                            context?.contentResolver,
-                            it
-                        )
-                        val bitmap = baseViewModel.createScaledBitmap(
-                            sourceBitmap,
-                            fromCamera = baseViewModel.imageFromCamera.value!!
-                        )
+                    baseViewModel.setImageSource(fromCamera = null)
+                    photo.setImageBitmap(bitmap)
 
-                        baseViewModel.setImageSource(fromCamera = null)
-                        photo.setImageBitmap(bitmap)
-
-                        try {
-                            lifecycleScope.launch {
-                                result = baseViewModel.analyzeImage(
-                                    bitmap,
-                                    view.width,
-                                    view.height,
-                                    sourceBitmap.width,
-                                    sourceBitmap.height
-                                )
-                            }
-                        } catch (e: Exception) {
-                            Log.e("analyzer", e.printStackTrace().toString())
+                    try {
+                        lifecycleScope.launch {
+                            result = baseViewModel.analyzeImage(
+                                bitmap,
+                                view.width,
+                                view.height,
+                                sourceBitmap.width,
+                                sourceBitmap.height
+                            )
                         }
-
-                        resultView.results = result
-                        resultView.invalidate()
-                        resultView.visibility = View.VISIBLE
+                    } catch (e: Exception) {
+                        Log.e("analyzer", e.printStackTrace().toString())
                     }
-                })
 
+                    resultView.results = result
+                    resultView.invalidate()
+                    resultView.visibility = View.VISIBLE
+                }
             }
         }
     }

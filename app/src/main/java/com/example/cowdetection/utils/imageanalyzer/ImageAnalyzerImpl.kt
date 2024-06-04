@@ -14,9 +14,9 @@ import org.pytorch.torchvision.TensorImageUtils
 import javax.inject.Inject
 
 class ImageAnalyzerImpl @Inject constructor(
-    private val filePathProvider: FilePathProvider,
+    filePathProvider: FilePathProvider,
     private val prePostProcessor: PrePostProcessor,
-    private val resourceProvider: ResourceProvider
+    resourceProvider: ResourceProvider
 ) : ImageAnalyzer {
 
     companion object {

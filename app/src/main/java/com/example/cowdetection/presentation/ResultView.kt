@@ -12,9 +12,10 @@ import android.view.View
 import com.example.cowdetection.utils.prepostprocessor.model.AnalysisResult
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.util.Locale
 import kotlin.math.min
 
-class ResultView constructor(context: Context, attrs: AttributeSet?) : View(context, attrs) {
+class ResultView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
     var results: AnalysisResult? = null
 
@@ -26,17 +27,6 @@ class ResultView constructor(context: Context, attrs: AttributeSet?) : View(cont
         const val TEXT_Y = 35
         const val TEXT_WIDTH = 200
         const val TEXT_HEIGHT = 50
-//        val classes = listOf(
-//            "coverall",
-//            "gloves",
-//            "helmet",
-//            "mask_weared_incorrect",
-//            "uniform",
-//            "with_hat",
-//            "with_mask",
-//            "without_hat",
-//            "without_mask"
-//        )
     }
 
     @SuppressLint("DrawAllocation")
@@ -79,7 +69,7 @@ class ResultView constructor(context: Context, attrs: AttributeSet?) : View(cont
             paintText.textSize = 32F
 
             canvas.drawText(
-                String.format("%s %.2f", classes[result.classIndex], result.score),
+                String.format(Locale.getDefault(),"%s %.2f", classes[result.classIndex], result.score),
                 (result.rect.left + TEXT_X).toFloat(),
                 (result.rect.top + TEXT_Y).toFloat(),
                 paintText

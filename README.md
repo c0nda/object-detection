@@ -1,10 +1,10 @@
 # Object detection
 
-Android приложение для распознавания объектов на фото. Распознавание осуществляется прямо на устройстве. Фото можно выбрать из галереи или сделать новое с помощью камеры.
+Android app for recognizing objects in photos. Recognition is carried out directly on the device. User can choose photo from gallery or take a new one with camera.
 
-Для примера работы использована нейросеть из примеров с официального GitHub PyTorch: https://github.com/pytorch/android-demo-app.
+A neural network from official GitHub PyTorch https://github.com/pytorch/android-demo-app was used for demonstration of work.
 
-## Технологии
+## Tech stack
 
 * Adnroid SDK
 * Kotlin
